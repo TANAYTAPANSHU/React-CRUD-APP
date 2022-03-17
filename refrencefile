@@ -1,0 +1,120 @@
+
+import fbt from 'fbt';
+import React, {Fragment} from 'react';
+import ReactNative from 'react-native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import analytics from '@segment/analytics-react-native';
+import LinearGradient from 'react-native-linear-gradient';
+import Dash from 'react-native-dash';
+import Carousel from 'react-native-looped-carousel';
+import lodash from 'lodash';
+import moment from 'moment';
+import SnapCarousel, {Pagination} from 'react-native-snap-carousel';
+import {Picker} from '@react-native-picker/picker';
+import ImageCropPicker from 'react-native-image-crop-picker';
+import StepIndicator from 'react-native-step-indicator';
+import CheckBox from '@react-native-community/checkbox';
+import AutoHeightImage from 'react-native-auto-height-image';
+import Collapsible from 'react-native-collapsible';
+import Shimmer from 'react-native-shimmer';
+import * as Progress from 'react-native-progress';
+import * as ColorPicker from 'react-native-color-picker';
+import RNRestart from 'react-native-restart';
+import OTPInputView from '@twotalltotems/react-native-otp-input';
+import {useDispatch, useSelector} from 'react-redux';
+import SyncStorage from 'sync-storage';
+import {WebView} from 'react-native-webview';
+import Video from 'react-native-video';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import LottieView from 'lottie-react-native';
+import Toast from 'react-native-easy-toast';
+import ConfettiCannon from 'react-native-confetti-cannon';
+import GestureRecognizer from 'react-native-swipe-gestures';
+import StarRating from 'react-native-star-rating';
+import convertToProxyURL from 'react-native-video-cache';
+import emailValidator from 'email-validator';
+import * as Chart from 'victory-native';
+import RazorpayCheckout from 'react-native-razorpay';
+import RNFetchBlob from 'rn-fetch-blob';
+import DeviceInfo from 'react-native-device-info';
+import Paytm from '@philly25/react-native-paytm';
+import Sound from 'react-native-sound';
+import Clipboard from '@react-native-community/clipboard';
+import Share from 'react-native-share';
+import ViewShot from 'react-native-view-shot';
+import Draggable from 'react-native-draggable';
+import * as Font from 'expo-font';
+import * as NavigationCore from '@react-navigation/core';
+import ImageViewer from 'react-native-image-zoom-viewer';
+import * as NavigationRouter from '@react-navigation/routers';
+import {
+  LoginManager,
+  GraphRequest,
+  GraphRequestManager,
+} from 'react-native-fbsdk-next';
+import {
+  GoogleSignin,
+  statusCodes as googleSigninStatusCodes,
+} from '@react-native-community/google-signin';
+import * as FileSystem from 'expo-file-system';
+import * as ExpoShare from 'expo-sharing';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import SmsRetriever from 'react-native-sms-retriever';
+import RNUtils from '@mela-tech/react-native-utils';
+
+import {captureException} from '@sentry/react-native';
+import {
+  grid as gridFunction,
+  formatToDecimalPlace,
+} from '../../utils/layoutUtils';
+import * as ReactNativePaper from '../../components/Portal';
+import TouchableDebounce from '../../components/TouchableDebounce';
+import PressableDebounce from '../../components/PressableDebounce';
+import {
+  autoLog,
+  isEmpty,
+  optimiseImage,
+  toSnakeCase,
+  getDefaultImageUrl,
+  downloadAndShare,
+} from '../../utils';
+import * as utils from '../../utils';
+import {fetchPromise} from '../../utils/fetchPromise';
+import Text, {ProductText} from '../../components/CustomText';
+import TextGradient from '../../components/TextGradient';
+import appActions from '../../actions';
+import useActions from '../../hooks/useActions';
+import useMergeState from '../../hooks/useMergeState';
+import * as config from '../../constants/config';
+import {useTheme} from '../../context/theme';
+import * as context from '../../context';
+import DynamicJSX, {
+  DynamicJSXWithRef,
+} from '../../components/layoutEngine/DynamicJSX';
+
+const {width, height} = ReactNative.Dimensions.get('window');
+const grid = gridFunction(width);
+
+const generateFunction = (currentProps, ref = null) => {
+  let {globalProps, ...remainingProps} = currentProps;
+  let finalProps = {...globalProps, ...remainingProps};
+  let {data: allData, navigate, componentMap, ...props} = finalProps;
+  let component;
+  let data = {};
+  if (props.component) {
+    delete props.component;
+    data = allData;
+  } else {
+    if (typeof allData === 'object') {
+      delete allData.component;
+      data = allData;
+    }
+  }
+  props = finalProps;
+  const FunctionalComponent = functionalProps => {
+    const {component} = functionalProps;
+    const ChildComponent = component;
+    return <ChildComponent data={data} {...finalProps} navigate={navigate} />;
+  };
